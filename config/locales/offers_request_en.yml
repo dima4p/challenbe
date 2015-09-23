@@ -1,0 +1,4 @@
+---
+en:
+  offers_request:
+    bad_response: "Bad response is received: %{name}"

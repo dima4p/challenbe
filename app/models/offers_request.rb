@@ -1,6 +1,23 @@
 # Model OffersRequest defines the protocol to get the Offers
 #
 class OffersRequest
+
+  include ActiveModel::Validations
+
+  attr_accessor :uid, :pub0, :page, :pages, :qty
+
+  validates :uid, :pub0, presence: true
+  validates :pages, numericality: true
+  validates :page, numericality: {less_than_or_equal_to: :pages}
+
+  def initialize(hash)
+    hash = hash.with_indifferent_access
+    @uid = hash[:uid]
+    @pub0 = hash[:pub0]
+    @page = hash[:page].to_i
+    @pages = (hash[:pages] || 1).to_i
+  end
+
   class << self
     def get(params)
       params = params.dup

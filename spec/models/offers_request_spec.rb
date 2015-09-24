@@ -1,6 +1,15 @@
 require 'rails_helper'
 
 describe OffersRequest, type: :model do
+
+  subject {OffersRequest.new uid: 'player1', pub0: 'campaign2'}
+
+  it {should be_valid}
+  it {should validate_presence_of :uid}
+  it {should validate_presence_of :pub0}
+  it {should validate_numericality_of(:page).is_less_than_or_equal_to 1}
+  # it {should validate_numericality_of(:pages)}
+
   describe :class do
     describe '.get' do
       context 'with correct params' do

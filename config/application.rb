@@ -22,5 +22,15 @@ module OfferApi
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
+
+    if ENV['colorize_logging'] == 'false'
+      config.colorize_logging = false
+    end
+
+    config.sass.preferred_syntax = :sass
+    config.generators do |g|
+      g.colorize_logging = true
+    end
+
   end
 end

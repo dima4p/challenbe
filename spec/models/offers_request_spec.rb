@@ -10,6 +10,38 @@ describe OffersRequest, type: :model do
   it {should validate_numericality_of(:page).is_less_than_or_equal_to 1}
   # it {should validate_numericality_of(:pages)}
 
+  describe '#attributes' do
+    it 'returns a Hash with the following keys: :uid, :pub0, :page' do
+      expect(subject.attributes).to be_a Hash
+      expect(subject.attributes.keys).to eq [:uid, :pub0, :page]
+    end
+  end   #attributes
+
+  describe '#fetch!' do
+    before :each do
+      stub_request(:get, 'http://api.fyber.com/feed/v1/offers.json')
+        .with(query: hash_including(pub0: 'campaign2', uid: 'player1'))
+        .to_return(
+          status: 200,
+          body: File.read(Rails.root.join(*%w[spec fixtures files response])),
+          headers: {})
+    end
+
+    it 'returns an Array' do
+      expect(subject.fetch!).to be_an Array
+    end
+
+    it 'assings :pages to itself' do
+      subject.fetch!
+      expect(subject.pages).to eq 2
+    end
+
+    it 'assings :qty to itself' do
+      subject.fetch!
+      expect(subject.qty).to eq 2
+    end
+  end   #fetch!
+
   describe :class do
     describe '.get' do
       context 'with correct params' do

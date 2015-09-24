@@ -18,6 +18,22 @@ class OffersRequest
     @pages = (hash[:pages] || 1).to_i
   end
 
+  def attributes
+    {
+      uid: uid,
+      pub0: pub0,
+      page: page,
+    }
+  end
+
+  def fetch!
+    result = self.class.get attributes
+    Rails.logger.debug "OffersRequest@#{__LINE__}#fetch! #{result.inspect}"
+    @pages = result['pages'].to_i
+    @qty = result['count'].to_i
+    result['offers']
+  end
+
   class << self
     def get(params)
       params = params.dup

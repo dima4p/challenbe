@@ -90,7 +90,7 @@ GEM
       nokogiri (~> 1.6.0)
       ruby_parser (~> 3.5)
     i18n (0.7.0)
-    i18n_scaffold_controller_template (1.1.0)
+    i18n_scaffold_controller_template (1.1.1)
     i18n_scaffold_generator (1.0.4)
     i18n_yaml_sorter (0.2.0)
     jquery-rails (4.0.5)

@@ -29,9 +29,15 @@ class OffersRequest
   def fetch!
     result = self.class.get attributes
     Rails.logger.debug "OffersRequest@#{__LINE__}#fetch! #{result.inspect}"
-    @pages = result['pages'].to_i
-    @qty = result['count'].to_i
-    result['offers']
+    if result.is_a? Hash
+      @pages = result['pages'].to_i
+      @qty = result['count'].to_i
+      result['offers'].map do |hash|
+        Offer.new hash
+      end
+    else
+      result
+    end
   end
 
   class << self

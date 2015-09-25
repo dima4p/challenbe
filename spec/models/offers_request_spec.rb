@@ -18,28 +18,46 @@ describe OffersRequest, type: :model do
   end   #attributes
 
   describe '#fetch!' do
-    before :each do
-      stub_request(:get, 'http://api.fyber.com/feed/v1/offers.json')
-        .with(query: hash_including(pub0: 'campaign2', uid: 'player1'))
-        .to_return(
-          status: 200,
-          body: File.read(Rails.root.join(*%w[spec fixtures files response])),
-          headers: {})
-    end
+    context 'when OffersRequest.get is successful' do
+      before :each do
+        stub_request(:get, 'http://api.fyber.com/feed/v1/offers.json')
+          .with(query: hash_including(pub0: 'campaign2', uid: 'player1'))
+          .to_return(
+            status: 200,
+            body: File.read(Rails.root.join(*%w[spec fixtures files response])),
+            headers: {})
+      end
 
-    it 'returns an Array' do
-      expect(subject.fetch!).to be_an Array
-    end
+      it 'returns an Array of Offers if success' do
+        expect(subject.fetch!).to be_an Array
+        expect(subject.fetch!.first).to be_an Offer
+      end
 
-    it 'assings :pages to itself' do
-      subject.fetch!
-      expect(subject.pages).to eq 2
-    end
+      it 'assings :pages to itself' do
+        subject.fetch!
+        expect(subject.pages).to eq 2
+      end
 
-    it 'assings :qty to itself' do
-      subject.fetch!
-      expect(subject.qty).to eq 2
-    end
+      it 'assings :qty to itself' do
+        subject.fetch!
+        expect(subject.qty).to eq 2
+      end
+    end   # when OffersRequest.get is successful
+
+    context 'when OffersRequest.get is not successful' do
+      before :each do
+        stub_request(:get, 'http://api.fyber.com/feed/v1/offers.json')
+          .with(query: hash_including(pub0: 'campaign2', uid: 'player1'))
+          .to_return(
+            status: 400,
+            body: File.read(Rails.root.join(*%w[spec fixtures files response])),
+            headers: {})
+      end
+
+      it 'returns the string' do
+        expect(subject.fetch!).to be_an String
+      end
+    end   # when OffersRequest.get is not successful
   end   #fetch!
 
   describe :class do

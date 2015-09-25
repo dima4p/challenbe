@@ -2,6 +2,10 @@
 #
 class Offer
 
+  class << self
+    include ActiveModel::Translation
+  end
+
   attr_accessor :title, :thumbnail, :payout
 
   def initialize(hash = {})

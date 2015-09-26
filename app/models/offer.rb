@@ -10,7 +10,7 @@ class Offer
 
   def initialize(hash = {})
     @title = hash['title']
-    @thumbnail = hash['thumbnail']
+    @thumbnail = hash['thumbnail']['lowres'] if hash['thumbnail']
     @payout = hash['payout']
   end
 

@@ -1,0 +1,6 @@
+---
+en:
+  application_name: "Offer API"
+  errors:
+    template:
+      header: "Errors found"

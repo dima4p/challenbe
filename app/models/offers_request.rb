@@ -3,6 +3,7 @@
 class OffersRequest
 
   include ActiveModel::Validations
+  include ActiveModel::Conversion
 
   attr_accessor :uid, :pub0, :page, :pages, :qty
 
@@ -10,12 +11,13 @@ class OffersRequest
   validates :pages, numericality: true
   validates :page, numericality: {less_than_or_equal_to: :pages}
 
-  def initialize(hash)
+  def initialize(hash = {})
+    hash ||= {}
     hash = hash.with_indifferent_access
     @uid = hash[:uid]
     @pub0 = hash[:pub0]
     @page = hash[:page].to_i
-    @pages = (hash[:pages] || 1).to_i
+    set_pages hash[:pages]
   end
 
   def attributes
@@ -28,19 +30,32 @@ class OffersRequest
 
   def fetch!
     result = self.class.get attributes
-    Rails.logger.debug "OffersRequest@#{__LINE__}#fetch! #{result.inspect}"
     if result.is_a? Hash
-      @pages = result['pages'].to_i
+      set_pages result['pages']
       @qty = result['count'].to_i
       result['offers'].map do |hash|
-        Offer.new hash
+        offer = Offer.new hash
       end
     else
+      set_pages 1
       result
     end
   end
 
+  def persisted?
+    false
+  end
+
+  private
+
+  def set_pages(value)
+    @pages = [(value || 1).to_i, 1].max
+  end
+
   class << self
+
+    include ActiveModel::Translation
+
     def get(params)
       params = params.dup
       params[:appid] = Rails.application.secrets[:appid]

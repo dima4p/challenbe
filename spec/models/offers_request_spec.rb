@@ -10,6 +10,24 @@ describe OffersRequest, type: :model do
   it {should validate_numericality_of(:page).is_less_than_or_equal_to 1}
   # it {should validate_numericality_of(:pages)}
 
+  describe '#initialize' do
+    it 'intilizes :uid' do
+      expect(subject.uid).to eq 'player1'
+    end
+
+    it 'intilizes :pub0' do
+      expect(subject.pub0).to eq 'campaign2'
+    end
+
+    it 'intilizes :page' do
+      expect(subject.page).to eq 0
+    end
+
+    it 'intilizes :pages keeping it >= 1' do
+      expect(subject.pages).to eq 1
+    end
+  end   #initialize
+
   describe '#attributes' do
     it 'returns a Hash with the following keys: :uid, :pub0, :page' do
       expect(subject.attributes).to be_a Hash

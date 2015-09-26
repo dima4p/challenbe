@@ -20,6 +20,7 @@ class OffersRequest
     set_pages hash[:pages]
   end
 
+  # Returns a hash of attributes needed to perform the request to the API.
   def attributes
     {
       uid: uid,
@@ -28,6 +29,8 @@ class OffersRequest
     }
   end
 
+  # Requests API and saves the the supplementary data to the
+  # dedicated attributes.
   def fetch!
     result = self.class.get attributes
     if result.is_a? Hash
@@ -56,6 +59,10 @@ class OffersRequest
 
     include ActiveModel::Translation
 
+    # Adds required additional parameters to the given hash,
+    # performs request to the API, and processes the response
+    # returning hash if it is correct. Otherwise returns a string
+    # with the diagnostics.
     def get(params)
       params = params.dup
       params[:appid] = Rails.application.secrets[:appid]
@@ -65,7 +72,7 @@ class OffersRequest
       params[:ip] = Rails.application.secrets[:ip]
       params[:offer_types] = Rails.application.secrets[:offer_types]
       params[:timestamp] = Time.current.to_i
-      params = process_params params
+      params = add_hashkey params
       uri = URI Rails.application.secrets[:api_url]
       uri.query = params.to_param
       res = Net::HTTP.get_response(uri)
@@ -88,7 +95,8 @@ class OffersRequest
 
     private
 
-    def process_params(params)
+    # Adds a valid :hashkey key to the given hash
+    def add_hashkey(params)
       params = Hash[params.sort]
       string = "#{params.to_param}&#{Rails.application.secrets[:api_key]}"
       params[:hashkey] = Digest::SHA1.hexdigest string

@@ -180,7 +180,7 @@ describe OffersRequest, type: :model do
     end   # .get
 
     describe :private do
-      describe '.process_params' do
+      describe '.add_hashkey' do
         let(:params) do
           {
             appid: 157,
@@ -195,21 +195,21 @@ describe OffersRequest, type: :model do
           }
         end
         it 'returns a Hash' do
-          expect(OffersRequest.send :process_params, params).to be_a Hash
+          expect(OffersRequest.send :add_hashkey, params).to be_a Hash
         end
 
         it 'sorts the keys' do
-          expect(OffersRequest.send(:process_params, params).keys.second).to eq :device_id
+          expect(OffersRequest.send(:add_hashkey, params).keys.second).to eq :device_id
         end
 
         it 'adds the key :hashkey to the end' do
-          expect(OffersRequest.send(:process_params, params).keys.last).to eq :hashkey
+          expect(OffersRequest.send(:add_hashkey, params).keys.last).to eq :hashkey
         end
 
         it 'calculates the correct :hashkey value' do
           expect(Rails.application.secrets).to receive(:[]).with(:api_key)
             .and_return('e95a21621a1865bcbae3bee89c4d4f84')
-          expect(OffersRequest.send(:process_params, params)[:hashkey])
+          expect(OffersRequest.send(:add_hashkey, params)[:hashkey])
             .to eq '7a2b1604c03d46eec1ecd4a686787b75dd693c4d'
         end
       end

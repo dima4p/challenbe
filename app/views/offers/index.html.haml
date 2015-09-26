@@ -1,0 +1,51 @@
+- title t('.title')
+
+= form_for(@offers_request, url: offers_path, method: :get) do |f|
+  - if @offers_request.errors.any?
+    #error_explanation
+      %h2
+        = t 'errors.template.header', model: t('.offers_request'), count: @offers_request.errors.count
+      %ul
+        - @offers_request.errors.full_messages.each do |msg|
+          %li= msg
+
+  .field
+    = f.label :uid
+    %br
+    = f.text_field :uid
+  .field
+    = f.label :pub0
+    %br
+    = f.text_field :pub0
+  .field
+    = f.label :page
+    %br
+    = f.select :page, options_for_select((1..@offers_request.pages).to_a, @offers_request.page)
+    = f.hidden_field :pages
+
+  .actions
+    = f.submit t '.submit'
+
+- if @offers.nil?
+  -# nothing
+- elsif @offers.is_a? String
+  .empty
+    = @offers
+- elsif @offers.size > 0
+  %table
+    %thead
+      %tr
+        %th
+        %th= Offer.human_attribute_name :title
+        %th{class: 'numeric'}= Offer.human_attribute_name :payout
+
+    %tbody
+      - @offers.each do |offer|
+        %tr{ :class => cycle(:odd, :even) }
+          %td
+            = image_tag offer.thumbnail
+          %td= offer.title
+          %td{class: 'numeric'}= offer.payout
+- else
+  .empty
+    = t '.empty'

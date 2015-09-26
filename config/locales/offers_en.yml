@@ -1,0 +1,17 @@
+---
+en:
+  activerecord:
+    models:
+      offer: "Offer"
+    attributes:
+      offer: 
+        title: "Title"
+        thumbnail: "Thumbnail"
+        payout: "Payout"
+  offers:
+    form:
+      offers_request: "Offers parameters"
+    index:
+      empty: "No offers found"
+      submit: 'List the offers for the parameters above'
+      title: "Listing of the offers"

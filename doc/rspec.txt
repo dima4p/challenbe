@@ -1,0 +1,79 @@
+
+OffersController
+  GET index
+    assigns the new OffersRequest to @offers_request with attributes from params
+    with valid params
+      sends :fetch! to the @offers_request
+      assigns the offers as @offers
+    with invalid params
+      does not send :fetch! to the @offers_request
+      assigns nil to @offers
+
+Offer
+  #initialize
+    intilizes payout
+    intilizes thumbnail
+    intilizes title
+
+OffersRequest
+  should be valid
+  should require uid to be set
+  should require pub0 to be set
+  should only allow numbers for page which are less than or equal to 1
+  #initialize
+    intilizes :uid
+    intilizes :pub0
+    intilizes :page
+    intilizes :pages keeping it >= 1
+  #attributes
+    returns a Hash with the following keys: :uid, :pub0, :page
+  #fetch!
+    when OffersRequest.get is successful
+      returns an Array of Offers if success
+      assings :pages to itself
+      assings :qty to itself
+    when OffersRequest.get is not successful
+      returns the string
+  class
+    .get
+      with correct params
+        returns a Hash
+        the returned hash
+          has the keys %w[code count offers page]
+          has an Array in "offers" key
+      with incorrect params
+        when response body is blank
+          returns a String with response status
+        when response body is not blank
+          and is valid json
+            containing "code" key
+              returns a String with response status
+            not containing "code" key
+              returns a String with response status
+          and is invalid json
+            returns a String with response status
+    private
+      .add_hashkey
+        returns a Hash
+        sorts the keys
+        adds the key :hashkey to the end
+        calculates the correct :hashkey value
+
+OffersController
+  routing
+    routes to #index
+    routes to #new
+    routes to #show
+    routes to #edit
+    routes to #create
+    routes to #update via PUT
+    routes to #update via PATCH
+    routes to #destroy
+
+offers/index
+  renders a list of offers
+  renders the offers_request form
+
+Finished in 0.13567 seconds (files took 2.02 seconds to load)
+42 examples, 0 failures
+

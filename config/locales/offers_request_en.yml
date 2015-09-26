@@ -1,4 +1,13 @@
 ---
 en:
+  activemodel:
+    models:
+      offers_request: "Offers parameters"
+    attributes:
+      offers_request:
+        uid: "User ID"
+        pub0: 'Custom parameter'
+        page: 'Page'
+        pages: 'Pages'
   offers_request:
     bad_response: "Bad response is received: %{name}"

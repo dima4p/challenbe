@@ -109,19 +109,73 @@ describe OffersRequest, type: :model do
       end   # with correct params
 
       context 'with incorrect params' do
-        before :each do
-          stub_request(:get, 'http://api.fyber.com/feed/v1/offers.json')
-            .with(query: hash_including(pub0: 'campaign2'))
-            .to_return(
-              status: 400,
-              body: '',
-              headers: {})
-        end
+        context 'when response body is blank' do
+          before :each do
+            stub_request(:get, 'http://api.fyber.com/feed/v1/offers.json')
+              .with(query: hash_including(pub0: 'campaign2'))
+              .to_return(
+                status: 400,
+                body: '',
+                headers: {})
+          end
 
-        it 'returns a String' do
-          expect(OffersRequest.get pub0: 'campaign2', page: 1)
-              .to be_an String
-        end
+          it 'returns a String with response status' do
+            expect(OffersRequest.get pub0: 'campaign2', page: 1)
+                .to eq 'Bad response is received: Net::HTTPBadRequest'
+          end
+        end   # when response body is blank
+
+        context 'when response body is not blank' do
+          context 'and is valid json' do
+            context 'containing "code" key' do
+              before :each do
+                stub_request(:get, 'http://api.fyber.com/feed/v1/offers.json')
+                  .with(query: hash_including(pub0: 'campaign2'))
+                  .to_return(
+                    status: 400,
+                    body: '{"code":"ERROR_INVALID_PAGE"}',
+                    headers: {})
+              end
+
+              it 'returns a String with response status' do
+                expect(OffersRequest.get pub0: 'campaign2', page: 1)
+                    .to eq 'Bad response is received: ERROR_INVALID_PAGE'
+              end
+            end   # containing "code" key
+
+            context 'not containing "code" key' do
+              before :each do
+                stub_request(:get, 'http://api.fyber.com/feed/v1/offers.json')
+                  .with(query: hash_including(pub0: 'campaign2'))
+                  .to_return(
+                    status: 400,
+                    body: '{}',
+                    headers: {})
+              end
+
+              it 'returns a String with response status' do
+                expect(OffersRequest.get pub0: 'campaign2', page: 1)
+                    .to eq 'Bad response is received: Net::HTTPBadRequest'
+              end
+            end   # not containing "code" key
+          end   # and is valid json
+
+          context 'and is invalid json' do
+            before :each do
+              stub_request(:get, 'http://api.fyber.com/feed/v1/offers.json')
+                .with(query: hash_including(pub0: 'campaign2'))
+                .to_return(
+                  status: 400,
+                  body: 'zzzz',
+                  headers: {})
+            end
+
+            it 'returns a String with response status' do
+              expect(OffersRequest.get pub0: 'campaign2', page: 1)
+                  .to eq 'Bad response is received: Net::HTTPBadRequest'
+            end
+          end   # and is invalid json
+        end   # when response body is not blank
       end   # with incorrect params
     end   # .get
 

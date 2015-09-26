@@ -69,10 +69,21 @@ class OffersRequest
       uri = URI Rails.application.secrets[:api_url]
       uri.query = params.to_param
       res = Net::HTTP.get_response(uri)
-      return I18n.t 'offers_request.bad_response', name: res.class unless res.is_a? Net::HTTPOK
-      res = JSON.parse res.body
-      res.slice! *%w[code count pages offers]
-      res
+      response_class = res.class
+      if res.body.present?
+        res = JSON.parse res.body
+        if response_class == Net::HTTPOK and
+            (res.keys & %w[code count pages offers]).size == 4
+          res.slice! *%w[code count pages offers]
+          res
+        else
+          I18n.t 'offers_request.bad_response', name: (res['code'] || response_class)
+        end
+      else
+        I18n.t 'offers_request.bad_response', name: response_class
+      end
+    rescue JSON::ParserError => e
+      I18n.t 'offers_request.bad_response', name: response_class
     end
 
     private
